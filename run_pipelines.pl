@@ -45,6 +45,7 @@ my $cleanup_status = cleanup();
 
 # in the future this will get a message in JSON format from a queue
 sub get_order_info {
+  my $ini = shift;
   my $d = {};
   open INI, "<$ini" or die;
   while(<INI>) {
