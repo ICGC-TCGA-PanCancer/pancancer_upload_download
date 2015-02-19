@@ -6,7 +6,7 @@ use strict;
 # It currently doesn't really call these workflows but mocks up the
 # calls for integration later.
 
-my $test = 1;
+my $test = 0;
 
 my ($ini_file) = @ARGV;
 
