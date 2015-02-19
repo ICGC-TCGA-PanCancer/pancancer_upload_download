@@ -5,6 +5,7 @@ use strict;
 # data download, followed by EMBL and DKFZ, and then ending with upload.
 # It currently doesn't really call these workflows but mocks up the
 # calls for integration later.
+# LEFT OFF WITH: I should be able to fill in the upload jobs below 
 
 my $test = 0;
 
@@ -85,31 +86,50 @@ sub download_data {
 }
 
 sub generate_embl_ini_file {
-
+  # TODO: better version to come
+  run("cp $ini_file ebi.ini");
 }
 
 sub run_embl_workflow {
+  # IDs
+  my @tumourAnalysisIds = split /,/, $ini->{tumourAnalysisIds};
+  my $controlAnalysisId = $ini->{controlAnalysisId};
+
+  # BAMs
+  my @tumourBams = split /,/, $ini->{tumourBams};
+  my $controlBam = $ini->{controlBam};
+
+  # server and key
+  my $server = $ini->{gnosServer};
+  my $pem = $ini->{pemFile};
+
+  run("echo docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v <embl_ini>:/workflow_data/workflow.ini -v <embl_output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c 'cd /workflow_data/ && run_embl_workflow.pl ... '");
 
 }
 
 sub upload_embl {
-
+  run("echo docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v $pem:/root/gnos_icgc_keyfile.pem -v <embl_output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c 'cd /result_data/ && run_upload.pl ... '");
 }
 
 sub generate_dkfz_ini_file {
-
+  # TODO: better version to come
+  run("cp $ini_file dkfz.ini");
+  my $ini = "tumourBams=<full_path>/7723a85b59ebce340fe43fc1df504b35.bam
+  controlBam=8f957ddae66343269cb9b854c02eee2f.bam
+  dellyInputFiles=<per_tumor>
+  outputDir=/full/path";
 }
 
 sub run_dkfz_workflow {
-
+  my $cmd = "docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v <ini>:/workflow_data/workflow.ini -v <output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c '/root/bin/runwrapper.sh'";
 }
 
 sub upload_dkfz {
-
+  run("echo docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v $pem:/root/gnos_icgc_keyfile.pem -v <dkfz_output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c 'cd /result_data/ && run_upload.pl ... '");
 }
 
 sub cleanup {
-
+  # TODO
 }
 
 sub run {
