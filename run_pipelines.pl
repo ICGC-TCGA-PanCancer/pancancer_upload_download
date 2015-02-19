@@ -80,7 +80,7 @@ sub download_data {
   for (my $i=0; $i<scalar(@analysisIds); $i++) {
     my $currId = $analysisIds[$i];
     my $currBam = $bams[$i];
-    my $return = run("docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v  $pem:/root/gnos_icgc_keyfile.pem briandoconnor/pancancer-upload-download:1.0.0 'cd /workflow_data/ && gtdownload -c /root/gnos_icgc_keyfile.pem -k 60 -vv $server/cghub/data/analysis/download/$currId'");
+    my $return = run("docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v  $pem:/root/gnos_icgc_keyfile.pem briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c 'cd /workflow_data/ && gtdownload -c /root/gnos_icgc_keyfile.pem -k 60 -vv $server/cghub/data/analysis/download/$currId'");
   }
 }
 
