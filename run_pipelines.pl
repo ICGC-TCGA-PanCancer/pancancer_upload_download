@@ -54,7 +54,8 @@ sub setup_dirs {
   run("mkdir -p ".$ini->{workingDir}."/settings");
   run("mkdir -p ".$ini->{workingDir}."/results");
   run("mkdir -p ".$ini->{workingDir}."/working");
-  run("mkdir -p ".$ini->{workingDir}."/downloads");
+  run("mkdir -p ".$ini->{workingDir}."/downloads/dkfz");
+  run("mkdir -p ".$ini->{workingDir}."/downloads/embl");
   run("mkdir -p ".$ini->{workingDir}."/inputs");
   run("mkdir -p ".$ini->{workingDir}."/uploads");
 }
@@ -215,9 +216,14 @@ try {
 
 sub generate_dkfz_ini_file {
   # TODO: better version to come
-  my $ini = "tumourBams=<full_path>/7723a85b59ebce340fe43fc1df504b35.bam
+  # The tumor bams and the delly files are stored in a bash array, i.e. arr=( a b c d )
+  # Please note the syntax for that! You can query it with for i in ${arr[@]}; do ...
+  my $ini = "tumorBams=( <full_path>/7723a85b59ebce340fe43fc1df504b35.bam )
   controlBam=8f957ddae66343269cb9b854c02eee2f.bam
-  dellyInputFiles=<per_tumor>";
+  dellyInputFiles=( <per_tumor> )
+  runACEeq=true
+  runSNVCalling=true
+  runIndelCalling=true";
   open OUT, ">".$ini->{workingDir}."/settings/dkfz.ini" or die;
   print OUT $ini;
   close OUT;
@@ -225,7 +231,7 @@ sub generate_dkfz_ini_file {
 
 # FIXME: need to have Michael fill this in
 sub run_dkfz_workflow {
-  my $cmd = "echo docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v ".$ini->{workingDir}."/settings/dkfz.ini:/workflow_data/workflow.ini -v ".$ini->{workingDir}."/results:/result_data <dkfz_name>/<dkfz_workflow>:<version> /bin/bash -c '/root/bin/runwrapper.sh'";
+  my $cmd = "docker run -t -i -v ".$ini->{workingDir}."/downloads/dkfz:/mnt/datastore/bundledFiles -v ".$ini->{workingDir}.":/mnt/datastore/workflow_data -v ".$ini->{workingDir}."/settings/dkfz.ini:/mnt/datastore/workflow_data/workflow.ini -v ".$ini->{workingDir}."/results:/mnt/datastore/result_data <user>/<dockername>:<dockerversion> /bin/bash -c '/root/bin/runwrapper.sh'";
 }
 
 sub upload_dkfz {
