@@ -113,14 +113,19 @@ sub upload_embl {
 
 sub generate_dkfz_ini_file {
   # TODO: better version to come
+  # The tumor bams and the delly files are stored in a bash array, i.e. arr=( a b c d )
+  # Please note the syntax for that! You can query it with for i in ${arr[@]}; do ...
   run("cp $ini_file dkfz.ini");
-  my $ini = "tumourBams=<full_path>/7723a85b59ebce340fe43fc1df504b35.bam
+  my $ini = "tumorBams=( <full_path>/7723a85b59ebce340fe43fc1df504b35.bam )
   controlBam=8f957ddae66343269cb9b854c02eee2f.bam
-  dellyInputFiles=<per_tumor>";
+  dellyInputFiles=( <per_tumor> )
+  runACEeq=true
+  runSNVCalling=true
+  runIndelCalling=true";
 }
 
 sub run_dkfz_workflow {
-  my $cmd = "docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v <ini>:/workflow_data/workflow.ini -v <output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c '/root/bin/runwrapper.sh'";
+  my $cmd = "docker run -t -i -v <referenceDirectory>:/mnt/datastore/bundledFiles -v /media/large_volume/workflow_data:/mnt/datastore/workflow_data -v <ini>:/mnt/datastore/workflow_data/workflow.ini -v <output_per_donor>:/mnt/datastore/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c '/root/bin/runwrapper.sh'";
 }
 
 sub upload_dkfz {
