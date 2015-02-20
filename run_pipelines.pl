@@ -116,8 +116,7 @@ sub generate_dkfz_ini_file {
   run("cp $ini_file dkfz.ini");
   my $ini = "tumourBams=<full_path>/7723a85b59ebce340fe43fc1df504b35.bam
   controlBam=8f957ddae66343269cb9b854c02eee2f.bam
-  dellyInputFiles=<per_tumor>
-  outputDir=/full/path";
+  dellyInputFiles=<per_tumor>";
 }
 
 sub run_dkfz_workflow {
