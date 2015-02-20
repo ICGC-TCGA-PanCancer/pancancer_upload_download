@@ -218,9 +218,10 @@ sub generate_dkfz_ini_file {
   # TODO: better version to come
   # The tumor bams and the delly files are stored in a bash array, i.e. arr=( a b c d )
   # Please note the syntax for that! You can query it with for i in ${arr[@]}; do ...
-  my $ini = "tumorBams=( <full_path>/7723a85b59ebce340fe43fc1df504b35.bam )
+  my $ini = "#!/bin/bash
+  tumorBams=( <full_path>/7723a85b59ebce340fe43fc1df504b35.bam )
   controlBam=8f957ddae66343269cb9b854c02eee2f.bam
-  dellyInputFiles=( <per_tumor> )
+  dellyFiles=( <per_tumor> )
   runACEeq=true
   runSNVCalling=true
   runIndelCalling=true";
