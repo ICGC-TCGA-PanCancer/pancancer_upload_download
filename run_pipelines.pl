@@ -7,7 +7,18 @@ use strict;
 # calls for integration later.
 # LEFT OFF WITH: I should be able to fill in the upload jobs below
 
+# TODO
+# ----
+# * need names, versions, URLs for workflows below, see vcf upload jobs
+# * need to set current time string
+#
+
 my $test = 0;
+# FIXME: need actual dates
+my $year = "2015";
+my $month = "02";
+my $day = "20";
+
 
 my ($ini_file) = @ARGV;
 
@@ -58,6 +69,7 @@ sub setup_dirs {
   run("mkdir -p ".$ini->{workingDir}."/downloads/embl");
   run("mkdir -p ".$ini->{workingDir}."/inputs");
   run("mkdir -p ".$ini->{workingDir}."/uploads");
+  run("echo '{}' > /tmp/empty.json");
 }
 
 # in the future this will get a message in JSON format from a queue
@@ -79,6 +91,7 @@ sub get_order_info {
 sub download_data {
   my ($ini) = @_;
   # FIXME: Joachim and Michael, need to get the URLs from you
+  # DKFZ data bundle: https://gtrepo-dkfz.annailabs.com/cghub/data/analysis/download/41f20501-3f29-480d-863d-51c47efa112e
 }
 
 sub download_inputs {
@@ -145,14 +158,9 @@ sub upload_embl {
   my @tbimd5s;
   my @tarmd5s;
 
-  # FIXME: need actual dates
-  my $year = "2015";
-  my $month = "02";
-  my $day = "20";
-
   foreach my $type ("snv_mnv", "indel", "sv", "cnv") {
     foreach my $tumorAliquotId (split /,/, $ini->{tumourAliquotIds}) {
-      my $baseFile = $ini->{workingDir}."/results/$tumorAliquotId.embl_1-0-0.$year$month$day.somatic.$type";
+      my $baseFile = "/workflow_data/results/$tumorAliquotId.embl_1-0-0.$year$month$day.somatic.$type";
       push @vcfs, "$baseFile.vcf.gz";
       push @tbis, "$baseFile.vcf.gz.tbi";
       push @tars, "$baseFile.tar.gz";
@@ -163,56 +171,34 @@ sub upload_embl {
   }
 
   # FIXME: need a sample file list for the output
-  run("echo docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v $pem:/root/gnos_icgc_keyfile.pem -v <embl_output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c 'cd ".$ini->{workingDir}."/results/ && run_upload.pl ... '");
+  # FIXME: need to fill in URLs below
+  run("echo docker run -t -i -v /media/large_volume/workflow_data:/workflow_data -v $pem:/root/gnos_icgc_keyfile.pem -v <embl_output_per_donor>:/result_data briandoconnor/pancancer-upload-download:1.0.0 /bin/bash -c 'cd /workflow_data/results/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-1.0.3/lib
+  /opt/vcf-uploader/vcf-uploader-1.0.0/gnos_upload_vcf.pl --metadata-urls $metadataUrls
+  --vcfs ".join(",", @vcfs)."
+  --vcf-md5sum-files ".join(",", @vcfmd5s)."
+  --vcf-idxs ".join(",", @tbis)."
+  --vcf-idx-md5sum-files ".join(",", @tbis)."
+  --tarballs ".join(",", @tars)."
+  --tarball-md5sum-files ".join(",", @tarmd5s)."
+  --outdir ".$ini->{workingDir}."/uploads
+  --key ".$ini->{uploadPemFile}."
+  --upload-url ".$ini->{uploadServer}."
+  --qc-metrics-json /tmp/empty.json
+  --timing-metrics-json /tmp/empty.json
+  --workflow-src-url http://github.com
+  --workflow-url http://github.com
+  --workflow-name EMBL
+  --workflow-version 1.0.0
+  --seqware-version ".$ini->{seqwareVersion}."
+  --vm-instance-type ".$ini->{vmInstanceType}."
+  --vm-instance-cores ".$ini->{vmInstanceCores}."
+  --vm-instance-mem-gb ".$ini->{vmInstanceMemGb}."
+  --vm-location-code ".$ini->{vmLocationCode}."
+  --study-refname-override ".$ini->{study-refname-override}."
+  --analysis-center-override ".$ini->{analysis-center-override}."
+  '");
 }
 
-thisJob.getCommand()
-.addArgument("perl -I " + getWorkflowBaseDir() + "/bin/lib " + getWorkflowBaseDir() + "/bin/gnos_upload_vcf.pl")
-.addArgument("--metadata-urls " + metadataUrls)
-.addArgument("--vcfs " + vcfs)
-.addArgument("--vcf-md5sum-files " + vcfmd5s)
-.addArgument("--vcf-idxs " + tbis)
-.addArgument("--vcf-idx-md5sum-files " + tbimd5s)
-.addArgument("--tarballs " + tars)
-.addArgument("--tarball-md5sum-files " + tarmd5s)
-.addArgument("--outdir " + OUTDIR + "/upload")
-.addArgument("--key " + uploadPemFile)
-.addArgument("--upload-url " + uploadServer)
-.addArgument("--qc-metrics-json " + OUTDIR + "/qc_metrics.json")
-.addArgument("--timing-metrics-json " + OUTDIR + "/process_metrics.json")
-.addArgument("--workflow-src-url "+Version.WORKFLOW_SRC_URL)
-.addArgument("--workflow-url "+Version.WORKFLOW_URL)
-.addArgument("--workflow-name " + Version.WORKFLOW_NAME)
-.addArgument("--workflow-version " + Version.WORKFLOW_VERSION)
-.addArgument("--seqware-version " + Version.SEQWARE_VERSION)
-.addArgument("--vm-instance-type " + vmInstanceType)
-.addArgument("--vm-instance-cores " +vmInstanceCores)
-.addArgument("--vm-instance-mem-gb " +vmInstanceMemGb)
-.addArgument("--vm-location-code " +vmLocationCode)
-.addArgument("--uuid " + uuid)
-;
-try {
-  if (hasPropertyAndNotNull("saveUploadArchive") && hasPropertyAndNotNull("uploadArchivePath") && "true".equals(getProperty("saveUploadArchive"))) {
-    thisJob.getCommand().addArgument("--upload-archive "+ getProperty("uploadArchivePath"));
-  }
-  if(hasPropertyAndNotNull("study-refname-override")) {
-    thisJob.getCommand().addArgument("--study-refname-override " + getProperty("study-refname-override"));
-  }
-  if(hasPropertyAndNotNull("analysis-center-override")) {
-    thisJob.getCommand().addArgument("--analysis-center-override " + getProperty("analysis-center-override"));
-  }
-  if(hasPropertyAndNotNull("center-override")) {
-    thisJob.getCommand().addArgument("--center-override " + getProperty("center-override"));
-  }
-  if(hasPropertyAndNotNull("ref-center-override")) {
-    thisJob.getCommand().addArgument("--ref-center-override " + getProperty("ref-center-override"));
-  }
-  if(hasPropertyAndNotNull("upload-test") && Boolean.valueOf(getProperty("upload-test"))) {
-    thisJob.getCommand().addArgument("--test ");
-  }
-  if(hasPropertyAndNotNull("upload-skip") && Boolean.valueOf(getProperty("upload-skip"))) {
-    thisJob.getCommand().addArgument("--skip-upload");
-  }
 
 sub generate_dkfz_ini_file {
   # TODO: better version to come
@@ -224,7 +210,8 @@ sub generate_dkfz_ini_file {
   dellyFiles=( <per_tumor> )
   runACEeq=true
   runSNVCalling=true
-  runIndelCalling=true";
+  runIndelCalling=true
+  date=$year$month$day";
   open OUT, ">".$ini->{workingDir}."/settings/dkfz.ini" or die;
   print OUT $ini;
   close OUT;
