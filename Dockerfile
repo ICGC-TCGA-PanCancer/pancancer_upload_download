@@ -12,3 +12,5 @@ RUN mkdir -p /opt/gt-download-upload-wrapper && cd /opt/gt-download-upload-wrapp
 RUN mkdir -p /opt/vcf-uploader && cd /opt/vcf-uploader && wget --no-check-certificate https://github.com/ICGC-TCGA-PanCancer/vcf-uploader/archive/2.0.2.tar.gz && tar zxf 2.0.2.tar.gz
 RUN apt-get install -y python-dev python-pip libxml-dom-perl libxml-xpath-perl libjson-perl libxml-libxml-perl time libdata-uuid-libuuid-perl libcarp-always-perl libipc-system-simple-perl libdata-uuid-perl curl
 RUN pip install synapseclient python-dateutil elasticsearch xmltodict pysftp paramiko
+# temp workaround until we have new artifact
+RUN cd /opt/vcf-uploader/vcf-uploader-2.0.2 && rm gnos_upload_vcf.pl && wget https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/vcf-uploader/develop/gnos_upload_vcf.pl
