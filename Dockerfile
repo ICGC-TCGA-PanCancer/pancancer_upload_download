@@ -12,4 +12,8 @@ RUN mkdir -p /opt/vcf-uploader && cd /opt/vcf-uploader && wget --no-check-certif
 RUN apt-get update && apt-get install -y python-dev python-pip libxml-dom-perl libxml-xpath-perl libjson-perl libxml-libxml-perl time libdata-uuid-libuuid-perl libcarp-always-perl libipc-system-simple-perl libdata-uuid-perl curl vim
 RUN pip install synapseclient python-dateutil elasticsearch xmltodict pysftp paramiko
 # Test perl scripts
-RUN perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.7/lib /opt/vcf-uploader/vcf-uploader-2.0.3/gnos_upload_vcf.pl
+RUN perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.7/lib /opt/vcf-uploader/vcf-uploader-2.0.3/gnos_upload_vcf.pl && \
+    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.7/lib /opt/vcf-uploader/vcf-uploader-2.0.3/gnos_download_file.pl && \
+    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.7/lib /opt/vcf-uploader/vcf-uploader-2.0.3/get_donors_by_elastic_search.pl && \
+    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.7/lib /opt/vcf-uploader/vcf-uploader-2.0.3/synapse_upload_vcf.pl
+
