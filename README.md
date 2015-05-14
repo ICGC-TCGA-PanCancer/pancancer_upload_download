@@ -7,4 +7,4 @@ data from GNOS, including the VCF upload process used for PanCancer.
 
 1. Get this image
 
-        docker pull seqware/pancancer_upload_download
+        docker pull pancancer/pancancer_upload_download
