@@ -5,7 +5,7 @@ RUN cd /opt && wget -t 5 --timeout=5 --no-check-certificate https://cghub.ucsc.e
 RUN cd /opt && wget -t 5 --timeout=5 --no-check-certificate https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.7/genetorrent-common_3.8.7-ubuntu2.207-14.04_amd64.deb
 RUN cd /opt && wget -t 5 --timeout=5 --no-check-certificate https://cghub.ucsc.edu/software/downloads/GeneTorrent/3.8.7/genetorrent-upload_3.8.7-ubuntu2.207-14.04_amd64.deb
 RUN apt-get update && apt-get install -y libcurl3 libxqilla6 python
-RUN apt-get update && apt-get install -y libboost-program-options1.48.0 libboost-system1.48.0  libboost-filesystem1.48.0 libboost-regex1.48.0
+RUN apt-get update && apt-get install -y libboost-program-options1.54.0 libboost-system1.54.0  libboost-filesystem1.54.0 libboost-regex1.54.0
 RUN apt-get update && apt-get install -y rsync
 RUN cd /opt && dpkg --install genetorrent-download_3.8.7-ubuntu2.207-14.04_amd64.deb genetorrent-common_3.8.7-ubuntu2.207-14.04_amd64.deb genetorrent-upload_3.8.7-ubuntu2.207-14.04_amd64.deb
 RUN mkdir -p /opt/gt-download-upload-wrapper && cd /opt/gt-download-upload-wrapper && wget --no-check-certificate https://github.com/ICGC-TCGA-PanCancer/gt-download-upload-wrapper/archive/2.0.11.tar.gz && tar zxf 2.0.11.tar.gz
