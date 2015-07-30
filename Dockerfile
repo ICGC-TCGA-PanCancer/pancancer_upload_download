@@ -15,7 +15,7 @@ RUN pip install synapseclient python-dateutil elasticsearch xmltodict pysftp par
 RUN apt-get update && apt-get install -y sudo
 RUN useradd seqware
 # Test perl scripts
-RUN perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib /opt/vcf-uploader/vcf-uploader-2.0.5/gnos_upload_vcf.pl && \
-    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib /opt/vcf-uploader/vcf-uploader-2.0.5/gnos_download_file.pl && \
-    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib /opt/vcf-uploader/vcf-uploader-2.0.5/get_donors_by_elastic_search.pl && \
-    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib /opt/vcf-uploader/vcf-uploader-2.0.5/synapse_upload_vcf.pl
+RUN perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.12/lib /opt/vcf-uploader/vcf-uploader-2.0.6/gnos_upload_vcf.pl && \
+    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.12/lib /opt/vcf-uploader/vcf-uploader-2.0.6/gnos_download_file.pl && \
+    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.12/lib /opt/vcf-uploader/vcf-uploader-2.0.6/get_donors_by_elastic_search.pl && \
+    perl -c -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.12/lib /opt/vcf-uploader/vcf-uploader-2.0.6/synapse_upload_vcf.pl
